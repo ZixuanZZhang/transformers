@@ -89,7 +89,8 @@ class ResNetEmbeddings(nn.Module):
         )
         #self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.num_channels = config.num_channels
-        self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
+        self.avgpooler = nn.AdaptiveAvgPool2d((48,48))
+        #self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
 
     def forward(self, pixel_values: Tensor) -> Tensor:
         num_channels = pixel_values.shape[1]
