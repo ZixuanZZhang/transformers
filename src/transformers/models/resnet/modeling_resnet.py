@@ -87,9 +87,9 @@ class ResNetEmbeddings(nn.Module):
         self.embedder = ResNetConvLayer(
             config.num_channels, config.embedding_size, kernel_size=7, stride=2, activation=config.hidden_act
         )
-        self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.num_channels = config.num_channels
-        #self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=1)
+        self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
 
     def forward(self, pixel_values: Tensor) -> Tensor:
         num_channels = pixel_values.shape[1]
@@ -97,10 +97,10 @@ class ResNetEmbeddings(nn.Module):
             raise ValueError(
                 "Make sure that the channel dimension of the pixel values match with the one set in the configuration."
             )
-        embedding = self.embedder(pixel_values)
-        embedding = self.pooler(embedding)
-        #embedding = self.avgpooler(pixel_values)
-        #embedding = self.embedder(embedding)
+        #embedding = self.embedder(pixel_values)
+        #embedding = self.pooler(embedding)
+        embedding = self.avgpooler(pixel_values)
+        embedding = self.embedder(embedding)
         return embedding
 
 
