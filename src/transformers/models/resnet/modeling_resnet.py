@@ -87,9 +87,11 @@ class ResNetEmbeddings(nn.Module):
         self.embedder = ResNetConvLayer(
             config.num_channels, config.embedding_size, kernel_size=7, stride=2, activation=config.hidden_act
         )
-        #self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.upsample = nn.Upsample(scale_factor=1.5, mode='bilinear')
+        self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
+        self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.num_channels = config.num_channels
-        self.avgpooler = nn.AdaptiveAvgPool2d((48,48))
+        #self.avgpooler = nn.AdaptiveAvgPool2d((48,48))
         #self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
 
     def forward(self, pixel_values: Tensor) -> Tensor:
@@ -100,8 +102,10 @@ class ResNetEmbeddings(nn.Module):
             )
         #embedding = self.embedder(pixel_values)
         #embedding = self.pooler(embedding)
-        embedding = self.avgpooler(pixel_values)
+        embedding = self.upsample(pixel_values)
+        embedding = self.avgpooler(embedding)
         embedding = self.embedder(embedding)
+        embedding = self.pooler(embedding)
         return embedding
 
 
@@ -265,7 +269,8 @@ class ResNetPreTrainedModel(PreTrainedModel):
 
     def _init_weights(self, module):
         if isinstance(module, nn.Conv2d):
-            nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+            #nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+            nn.init.normal_(module, mean=0.0, std=1.0)
         elif isinstance(module, (nn.BatchNorm2d, nn.GroupNorm)):
             nn.init.constant_(module.weight, 1)
             nn.init.constant_(module.bias, 0)
