@@ -100,8 +100,12 @@ class ResNetEmbeddings(nn.Module):
             raise ValueError(
                 "Make sure that the channel dimension of the pixel values match with the one set in the configuration."
             )
-        embedding = self.embedder(pixel_values)
-        embedding = self.pooler(embedding)
+        #64
+        #embedding = self.embedder(pixel_values)
+        #embedding = self.pooler(embedding)
+        #32
+        embedding = self.pooler(pixel_values)
+        embedding = self.embedder(embedding)
         #embedding = self.upsample(pixel_values)
         #embedding = self.avgpooler(embedding)
         #embedding = self.embedder(embedding)
