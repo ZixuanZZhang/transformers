@@ -102,17 +102,17 @@ class ResNetEmbeddings(nn.Module):
                 "Make sure that the channel dimension of the pixel values match with the one set in the configuration."
             )
         #64
-        embedding = self.embedder(pixel_values)
-        embedding = self.pooler(embedding)
+        #embedding = self.embedder(pixel_values)
+        #embedding = self.pooler(embedding)
         #32
         #embedding = self.avgpooler(pixel_values)
         #embedding = self.embedder(embedding)
         #48
-        #embedding = self.upsample1(pixel_values)
-        #embedding = self.avgpooler(embedding)
-        #embedding = self.embedder(embedding)
-        #embedding = self.upsample2(embedding)
-        #embedding = self.pooler(embedding)
+        embedding = self.upsample1(pixel_values)
+        embedding = self.avgpooler(embedding)
+        embedding = self.embedder(embedding)
+        embedding = self.upsample2(embedding)
+        embedding = self.pooler(embedding)
         return embedding
 
 
