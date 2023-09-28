@@ -87,8 +87,9 @@ class ResNetEmbeddings(nn.Module):
         self.embedder = ResNetConvLayer(
             config.num_channels, config.embedding_size, kernel_size=7, stride=2, activation=config.hidden_act
         )
-        #self.upsample = nn.Upsample(scale_factor=1.5, mode='bilinear')
-        #self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
+        self.upsample1 = nn.Upsample(scale_factor=1.5, mode='bilinear')
+        self.upsample2 = nn.Upsample(scale_factor=4/3, mode='bilinear')
+        self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=1)
         self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.num_channels = config.num_channels
         #self.avgpooler = nn.AdaptiveAvgPool2d((48,48))
@@ -104,12 +105,14 @@ class ResNetEmbeddings(nn.Module):
         #embedding = self.embedder(pixel_values)
         #embedding = self.pooler(embedding)
         #32
-        embedding = self.pooler(pixel_values)
-        embedding = self.embedder(embedding)
-        #embedding = self.upsample(pixel_values)
-        #embedding = self.avgpooler(embedding)
+        #embedding = self.pooler(pixel_values)
         #embedding = self.embedder(embedding)
-        #embedding = self.pooler(embedding)
+        #48
+        embedding = self.upsample1(pixel_values)
+        embedding = self.avgpooler(embedding)
+        embedding = self.embedder(embedding)
+        embedding = self.upsample2(embedding)
+        embedding = self.pooler(embedding)
         return embedding
 
 
