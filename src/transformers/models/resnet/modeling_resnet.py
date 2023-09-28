@@ -87,8 +87,8 @@ class ResNetEmbeddings(nn.Module):
         self.embedder = ResNetConvLayer(
             config.num_channels, config.embedding_size, kernel_size=7, stride=2, activation=config.hidden_act
         )
-        self.upsample = nn.Upsample(scale_factor=1.5, mode='bilinear')
-        self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
+        #self.upsample = nn.Upsample(scale_factor=1.5, mode='bilinear')
+        #self.avgpooler = nn.AvgPool2d(kernel_size=3, stride=2, padding=16)
         self.pooler = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.num_channels = config.num_channels
         #self.avgpooler = nn.AdaptiveAvgPool2d((48,48))
@@ -100,12 +100,12 @@ class ResNetEmbeddings(nn.Module):
             raise ValueError(
                 "Make sure that the channel dimension of the pixel values match with the one set in the configuration."
             )
-        #embedding = self.embedder(pixel_values)
-        #embedding = self.pooler(embedding)
-        embedding = self.upsample(pixel_values)
-        embedding = self.avgpooler(embedding)
-        embedding = self.embedder(embedding)
+        embedding = self.embedder(pixel_values)
         embedding = self.pooler(embedding)
+        #embedding = self.upsample(pixel_values)
+        #embedding = self.avgpooler(embedding)
+        #embedding = self.embedder(embedding)
+        #embedding = self.pooler(embedding)
         return embedding
 
 
